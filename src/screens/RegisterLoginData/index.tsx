@@ -38,20 +38,20 @@ export function RegisterLoginData() {
 		resolver: yupResolver(schema),
 	});
 
-	const [array, setArray] = useState([]);
-
 	async function handleRegister(formData: FormData) {
 		const newLoginData = {
 			id: String(uuid.v4()),
 			...formData,
 		};
 
-		const dataKey = await AsyncStorage.getItem("@savepass:logins");
-		const parsedDataKey = JSON.parse(dataKey);
+		const dataKey = "@savepass:logins";
 
-		setArray([...parsedDataKey, newLoginData]);
+		const response = await AsyncStorage.getItem(dataKey);
+		const parsedData = JSON.parse(response) || [];
 
-		AsyncStorage.setItem("@savepass:logins", JSON.stringify(array));
+		const newLoginListData = [...parsedData, newLoginData];
+
+		await AsyncStorage.setItem(dataKey, JSON.stringify(newLoginListData));
 
 		navigate("Home");
 	}
